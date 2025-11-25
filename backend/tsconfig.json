@@ -11,5 +11,6 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": ["src"]
 }
