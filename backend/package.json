@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=staging nodemon src/index.ts"
+    "dev": "NODE_ENV=staging nodemon src/index.ts",
+    "dev_": "cross-env NODE_ENV=staging nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -13,16 +14,23 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.3",
+    "@types/pino": "^7.0.4",
+    "cross-env": "^10.1.0",
+    "pino-pretty": "^13.1.2",
     "ts-node": "^10.9.2"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.3",
     "pg": "^8.16.0",
-    "typeorm": "^0.3.24"
+    "pino": "^10.1.0",
+    "pino-http": "^11.0.0",
+    "typeorm": "^0.3.24",
+    "zod": "^4.1.13"
   }
 }
