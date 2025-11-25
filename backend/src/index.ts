@@ -1,5 +1,8 @@
 import express from "express";
 import { config } from "dotenv";
+//dotenv configuration
+config({ path: `./environments/.env.${process.env.NODE_ENV}` });
+console.log("Password is:", process.env.POSTGRES_PASSWORD);
 import cors from "cors";
 import healthRoute from "./routers/health"
 import {z} from "zod";
@@ -7,6 +10,7 @@ import pinoHttp from 'pino-http';
 import logger from "./utils/logger"
 //database's
 import { DatabaseConnection } from "./config/DatabaseConnection";
+
 
 //errors
 import { ErrorResponse } from "./errors/ErrorResponse";
@@ -17,9 +21,9 @@ import V1Router from "./routers/V1Router";
 //ResponseGenerator
 import ResponseGenerator from "./utils/ResponseGenerator"
 import pino from "pino";
+import httpStatusCodes from "./errors/HttpCodes";
 
-//dotenv configuration
-config({ path: `./environments/.env.${process.env.NODE_ENV}` });
+
 
 const envSchema = z.object({
     NODE_ENV: z.enum(["staging","production","test"]).default("staging"),
@@ -62,11 +66,15 @@ class Server {
     }
 
     private async _configure() {
-        //await DatabaseConnection.getInstance().init();
+        await DatabaseConnection.getInstance().init();
 
     }
 }
 
+// throw new ErrorHandler(
+//     httpStatusCodes.NOT_FOUND,
+//     "User not found"
+// )
 
 const server = new Server();
 
