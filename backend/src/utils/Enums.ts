@@ -1,0 +1,7 @@
+enum UserRole{
+
+}
+
+export {
+    UserRole
+}
