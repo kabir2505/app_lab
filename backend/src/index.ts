@@ -8,6 +8,7 @@ import logger from "./utils/logger"
 //database's
 import { DatabaseConnection } from "./config/DatabaseConnection";
 
+
 //errors
 import { ErrorResponse } from "./errors/ErrorResponse";
 
@@ -17,6 +18,7 @@ import V1Router from "./routers/V1Router";
 //ResponseGenerator
 import ResponseGenerator from "./utils/ResponseGenerator"
 import pino from "pino";
+import httpStatusCodes from "./errors/HttpCodes";
 
 //dotenv configuration
 config({ path: `./environments/.env.${process.env.NODE_ENV}` });
@@ -67,6 +69,10 @@ class Server {
     }
 }
 
+// throw new ErrorHandler(
+//     httpStatusCodes.NOT_FOUND,
+//     "User not found"
+// )
 
 const server = new Server();
 
