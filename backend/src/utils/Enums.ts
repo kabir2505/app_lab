@@ -5,6 +5,26 @@ enum UserRole{
     VIEWER = "viewer" //read only
 }
 
+enum TicketTypeEnum{
+    VIP = "vip",
+    REGULAR  = "regular",
+
+}
+
+enum BookingStatusEnum {
+    CONFIRMED="confirmed",
+    CANCELLED="cancelled"
+}
+
+enum ReportedEventEnum{
+    PENDING="pending",
+    REVIEWD="reviewed",
+    RESOLVED="resolved"
+}
+
 export {
-    UserRole
+    UserRole,
+    TicketTypeEnum,
+    BookingStatusEnum,
+    ReportedEventEnum
 }
