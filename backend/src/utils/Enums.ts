@@ -2,12 +2,13 @@ enum UserRole{
     ADMIN = "admin",
     ORGANIZER = "organizer", //Manage their own eventt
     ATTENDEE = "attendee", //register for events, buy tickets
-    VIEWER = "viewer" //read only
+    // VIEWER = "viewer" //read only
 }
 
 enum TicketTypeEnum{
     VIP = "vip",
     REGULAR  = "regular",
+    EARLY_BIRD = "early_bird"
 
 }
 
@@ -18,7 +19,7 @@ enum BookingStatusEnum {
 
 enum ReportedEventEnum{
     PENDING="pending",
-    REVIEWD="reviewed",
+    REJECTED="rejected",
     RESOLVED="resolved"
 }
 

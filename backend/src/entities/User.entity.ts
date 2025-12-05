@@ -21,7 +21,7 @@ export class User { //call User not users
     @Column()
     passwordHash: string;
 
-    @Column({ type: "enum", enum: UserRole, default:UserRole.VIEWER})
+    @Column({ type: "enum", enum: UserRole})
     role: UserRole;
 
     // @Column({ nullable: true})
@@ -31,12 +31,12 @@ export class User { //call User not users
     // login_otp_expiry: Date;
 
 
-    @OneToOne(() => OrganizerProfile, (profile) => profile.user)
-    @JoinColumn({name: "orgprofile_id"})
+    @OneToOne(() => OrganizerProfile, (profile) => profile.user, {cascade:true,eager:false})
+    // @JoinColumn({name: "orgprofile_id"})
     organizerProfile: OrganizerProfile; //user.organizerProfile
 
-    @OneToOne(() => AttendeeProfile, (profile) => profile.user)
-    @JoinColumn({name: "attprofile_id"})
+    @OneToOne(() => AttendeeProfile, (profile) => profile.user, {cascade:true, eager:false})
+    // @JoinColumn({name: "attprofile_id"})
     attendeeProfile: AttendeeProfile; //user.attendeeProfile
 
     //admin doesnt need a profile

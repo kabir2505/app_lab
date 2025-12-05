@@ -13,7 +13,7 @@ export class Booking{
     @JoinColumn({ name: "user_id" })
     user: User
 
-    @ManyToOne(() => TicketType, (ticket) => ticket.bookings)
+    @ManyToOne(() => TicketType, (ticket) => ticket.bookings, {onDelete: "CASCADE"})
     @JoinColumn({ name: "ticket_type_id" })
     ticketType: TicketType;
 
@@ -29,3 +29,10 @@ export class Booking{
     @CreateDateColumn()
     createdAt: Date;
 }
+
+// booking.ticketType      // ✅ exists
+// booking.ticket_type_id  // ❌ does NOT exist
+
+// repository.find({ where: {...} }) world → entity properties
+
+// createQueryBuilder("booking") world → raw SQL column names / aliases

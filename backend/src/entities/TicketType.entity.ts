@@ -10,14 +10,14 @@ export class TicketType{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Event, (event) => event.ticket_type)
+    @ManyToOne(() => Event, (event) => event.ticket_type, {onDelete: "CASCADE"})
     @JoinColumn({ name: "event_id" })
     event: Event;
     
     @Column({type: "enum", enum: TicketTypeEnum, default:TicketTypeEnum.REGULAR})
     name: TicketTypeEnum;
 
-    @Column({type: "numeric", default:0})
+    @Column({type: "int", default:0})
     price: number;
 
     @Column()
@@ -34,3 +34,15 @@ export class TicketType{
 
 
 }
+
+
+// ticket_types
+// -----------
+// id           (primary key)
+// event_id     (foreign key to events.id)  <-- created from @ManyToOne + @JoinColumn
+// name
+// price
+// seatLimit
+// createdAt
+// updatedAt
+// ...

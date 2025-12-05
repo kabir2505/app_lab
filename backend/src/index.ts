@@ -16,7 +16,7 @@ import { DatabaseConnection } from "./config/DatabaseConnection";
 import { ErrorResponse } from "./errors/ErrorResponse";
 
 //routers
-import V1Router from "./routers/V1Router";
+import v1Router from "./routers/V1Router";
 
 //ResponseGenerator
 import ResponseGenerator from "./utils/ResponseGenerator"
@@ -49,7 +49,7 @@ if (!parsed.success) {
 
 class Server {
     private _app = express();
-    private _router_v1 = V1Router;
+    private _router_v1 = v1Router;
 
 
 

@@ -36,8 +36,14 @@ export class Event{
     @Column({type: "timestamptz"})
     startDateTime: Date;
 
+    @Column({ nullable:true})
+    capacity: number | null
+
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @Column({default:false})
+    isBlocked:boolean;
 
     @OneToMany(() => TicketType, (ticket) => ticket.event)
     ticket_type: TicketType[];

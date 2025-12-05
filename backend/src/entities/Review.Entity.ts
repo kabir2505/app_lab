@@ -12,7 +12,7 @@ export class Review{
     @JoinColumn({ name: "user_id" })
     user: User
 
-    @ManyToOne(()=>Event, (event)=> event.reviews)
+    @ManyToOne(()=>Event, (event)=> event.reviews, {onDelete: "CASCADE"})
     @JoinColumn({ name: "event_id" })
     event: Event;
 

@@ -1,0 +1,46 @@
+Variables - camelCase
+    - functions, variables, class properties, method names
+Classes
+    - PascalCase
+Interface
+    - PascalCase with Interface prefix Interface
+        - interface IUserDTO() //less common nowadays
+Types -> PascalCase
+Constants -.> UPPER_CASE
+ENUMS -> PascalCase
+Private variables -> _optional underscore precfix
+
+------------------------------------
+Use interface when:
+
+✔ multiple classes must follow same shape (“contract”)
+✔ using implements
+✔ designing OOP-style service layers
+✔ working with dependency injection systems
+✔ you want declaration merging
+
+----------------------------------------
+🟥 7. When do you NOT need interface?
+Use type when:
+
+✔ describing request bodies
+✔ describing API responses
+✔ creating union types
+✔ creating mapped types
+✔ building utility types
+✔ using advanced type features
+✔ defining entity shapes for TypeORM
+✔ describing function signatures
+
+Types are more powerful and modern.
+
+
+-----------------------------------
+CRUD
+Entity  →  Repository  →  Service  →  Controller  →  Router  →  Validation
+
+Repository
+    - layer that sits between your service and your database
+    - a dedicated module that handles all database operations for a specific entity
+    - hides database complexity and exposes a clean api to the rest of your code
+    

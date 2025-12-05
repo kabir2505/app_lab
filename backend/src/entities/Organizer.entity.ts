@@ -1,5 +1,5 @@
 //user, organization name, bio/about, verified
-import { Column, PrimaryGeneratedColumn, Entity, CreateDateColumn, UpdateDateColumn, OneToOne } from "typeorm";
+import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToOne } from "typeorm";
 import {User} from "./User.entity"
 
 
@@ -9,14 +9,19 @@ export class OrganizerProfile{
     id: number;
 
     @OneToOne(() => User, (user) => user.organizerProfile )
+    @JoinColumn({ name: "user_id" })
     user: User;
 
     @Column({nullable:true})
-    organizationName: string;
+    organizationName: string | null;
 
     @Column({nullable: true})
-    website: string;
+    website: string | null;
 
     @Column({nullable: true})
-    bio: string
+    bio: string | null
+
+    @Column({type: "boolean", default:false})
+    isApproved: boolean;
+
 }

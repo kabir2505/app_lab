@@ -13,7 +13,7 @@ export class ReportedEvent{
     @JoinColumn({name: "reported_by_user"})
     user: User
 
-    @ManyToOne(()=>Event, (event) => event.reportedEvents)
+    @ManyToOne(()=>Event, (event) => event.reportedEvents, {onDelete: "CASCADE"})
     @JoinColumn({name: "event_id"})
     event:Event;
 

@@ -12,6 +12,9 @@ export class ErrorResponse {
     res: Response,
     next: NextFunction
   ) {
+
+    console.error("🔥 Error in request:", req.method, req.url);
+    console.error(err);
     // Case 1: your custom application errors
     if (err instanceof ErrorHandler) {
       logger.error(

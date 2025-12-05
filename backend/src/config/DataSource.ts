@@ -9,7 +9,9 @@ export const EventManagerDataSource = new DataSource({
     username: process.env.POSTGRES_USERNAME,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
-    entities: [path.resolve(__dirname, "../entity/*.entity.{ts,js}")],
+    entities: [
+    path.join(__dirname, "../entities/**/*.{ts,js}")
+],
     synchronize: true,
     logging: false,
 });
