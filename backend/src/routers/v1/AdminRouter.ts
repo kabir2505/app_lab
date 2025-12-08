@@ -23,6 +23,8 @@ class AdminRouter{
 
     private _configure(){
     this.router.get("/getPendingOrganizers",this._auth, this._role, this._adminController.listPendingOrganizers);
+    this.router.get("/stats", this._auth, this._role, this._adminController.getAdminStats);
+    this._router.get("/organizers", this._auth, this._role, AdminController.listAllOrganizers);
     this.router.patch("/approveOrganizer/:userId", this._auth, this._role, this._adminController.approveOrganizer);
     this.router.patch("/rejectOrganizer/:userId", this._auth, this._role, this._adminController.rejectOrganizer)
     }

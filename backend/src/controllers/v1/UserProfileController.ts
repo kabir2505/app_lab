@@ -19,7 +19,7 @@ import ResponseGenerator from "../../utils/ResponseGenerator";
 import { User } from "../../entities/User.entity";
 
 //REPOSITORIES
-import { attendeeProfileRepository, bookingRepository, userRepository } from "../../utils/Repositories";
+import { attendeeProfileRepository, bookingRepository, organizerRepository, userRepository } from "../../utils/Repositories";
 import { AuthHelper } from "../../utils/AuthHelper";
 import logger from "../../utils/logger";
 import { TicketType } from "../../entities/TicketType.entity"; 
@@ -29,6 +29,11 @@ export const UpdateAttendeeProfileSchema = z.object({
   preferences: z.string().nullable().optional(),
   bio: z.string().nullable().optional(),
   avatarUrl: z.string().url().nullable().optional(),
+})
+
+export const updateOrganizerProfileSchema = z.object({
+  website: z.string().nullable().optional(),
+  bio: z.string().nullable().optional()
 })
 
 export class UserProfileController {
@@ -168,6 +173,66 @@ export class UserProfileController {
         next(err)
     }
   }     
+
+
+ public static async updateOrganizerProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+
+    // Validate incoming fields
+    const result = updateOrganizerProfileSchema.safeParse(req.body);
+    if (!result.success) {
+      throw new ErrorHandler(
+        httpStatusCodes.BAD_REQUEST,
+        "Invalid profile fields"
+      );
+    }
+
+    const updates = result.data;
+
+    // Load organizer + profile
+    const organizer = await userRepository.findOne({
+      where: { id: user.id },
+      relations: ["organizerProfile"],
+    });
+
+    if (!organizer) {
+      throw new ErrorHandler(
+        httpStatusCodes.NOT_FOUND,
+        "Organizer not found"
+      );
+    }
+
+    // Ensure profile exists
+    let profile = organizer.organizerProfile;
+    if (!profile) {
+      // Create a new organizer profile if missing
+      profile = organizerRepository.create({
+        user: { id: user.id } as any,
+      });
+    }
+
+    // Apply updates safely
+    Object.assign(profile, updates);
+
+    // Save profile correctly
+    const savedProfile = await organizerRepository.save(profile);
+
+    return new ResponseGenerator(httpStatusCodes.OK, {
+      success: true,
+      message: "Organizer profile updated",
+      profile: savedProfile,
+    }).send(res);
+  } catch (err) {
+    next(err);
+  }
+}
+
+
 
   public static async getBookingById(
     req: Request,res: Response,next: NextFunction) {

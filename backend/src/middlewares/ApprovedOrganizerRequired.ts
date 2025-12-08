@@ -7,6 +7,7 @@ export function requireApprovedOrganizer(req:Request, res: Response, next: NextF
     try{
     const user = (req as any).user;
     
+    console.log(user);
     if (!user || user.role !== UserRole.ORGANIZER
     ) {
         throw new ErrorHandler(httpStatusCodes.FORBIDDEN, "Organizer access required")

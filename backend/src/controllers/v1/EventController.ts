@@ -40,7 +40,7 @@ export class EventController{
         // can be accessed by anyone, doesnt have to be logged in
             try {
                 //keep relations simple for get all 
-                const events = await eventRepository.find({where: {isBlocked:false}, relations: ["organizer", "ticket_type"]})
+                const events = await eventRepository.find({where: {isBlocked:false}, relations: ["organizer", "reviews", "ticket_type"]})
                  for (const event of events) {
 
                 // --- remainingCapacity ---
@@ -98,7 +98,7 @@ export class EventController{
             //event by id will need organizer info, reviews, reportedEvent, basically everything
             const event = await eventRepository.findOne({
                 where: {id: eventId},
-                relations:["organizer", "ticket_type", "reviews", "reportedEvents"]
+                relations:["organizer", "ticket_type", "reviews", "reviews.user", "reportedEvents"]
             })
 
             if (!event){
@@ -164,7 +164,7 @@ export class EventController{
             where: {
                 startDateTime: MoreThan(now),
             },
-            relations: ["organizer", "ticket_type"],
+            relations: ["organizer", "ticket_type", "reviews"],
             order: {
                 startDateTime: "ASC",
             },
@@ -233,9 +233,13 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
 
         // fetch events that belong to this organizer
         const events = await eventRepository.find({
-            where: { organizer: organizer.id },
-            relations: ["organizer", "ticket_type"],
+        where: { organizer: { id: organizer.id } },
+        relations: ["organizer", "ticket_type"],
         });
+
+
+        console.log(organizer);
+        //console.log(events);
 
         // ---- Add remainingCapacity + remainingSeats ----
         for (const event of events) {
@@ -296,11 +300,11 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
         //auth attaches user to req
         const organizer = req["user"];
 
-        const {title,description, location, category, startDateTime, bannerImageUrl, teasorVideoUrl} = req.body;
+        const {title,description, location, category, startDateTime, bannerImageUrl, teasorVideoUrl, capacity} = req.body;
         
-        const result = EventSchema.safeParse({location:location, category:category,title:title, description:description, startDateTime:startDateTime,bannerImageUrl:bannerImageUrl, teasorVideoUrl:teasorVideoUrl});
+        const result = EventSchema.safeParse({location:location, category:category,title:title, description:description, startDateTime:startDateTime,bannerImageUrl:bannerImageUrl, teasorVideoUrl:teasorVideoUrl, capacity:capacity});
         
-        
+        console.log(result);
 
         if (!result.success){
             throw new ErrorHandler(httpStatusCodes.BAD_REQUEST, "All fields required")
@@ -308,6 +312,8 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
 
         const validated = result.data;
 
+        const DEFAULT_BANNER =
+        "https://upload.wikimedia.org/wikipedia/en/5/5d/AKIRA_%281988_poster%29.jpg";
 
         //create new event
         const newEvent = eventRepository.create({
@@ -316,9 +322,10 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             location: validated.location,
             category: validated.category,
             startDateTime: validated.startDateTime,
-            bannerImageUrl: validated.bannerImageUrl ?? null,
+            bannerImageUrl: validated.bannerImageUrl ??  DEFAULT_BANNER,
             teasorVideoUrl: validated.teasorVideoUrl ?? null,
-            organizer: organizer
+            organizer: organizer,
+            capacity: validated.capacity
         })
 
         const savedEvent = await eventRepository.save(newEvent);

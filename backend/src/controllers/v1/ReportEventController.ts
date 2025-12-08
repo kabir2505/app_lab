@@ -210,42 +210,89 @@ export class ReportEventController{
         }
     }
 
+public static async rejectReportedEvent(req: Request, res: Response, next: NextFunction) {
+    try {
+        const reportId = Number(req.params.id);
 
-        public static async rejectReportedEvent(req:Request, res:Response, next:NextFunction){
-        try {
-            const admin = (req as any).user;
+        const report = await reportedEventRepository.findOne({
+            where: { id: reportId },
+            relations: ["event", "user"]
+        });
 
-            const reportId = Number(req.params.id);
-            
-            const report = await reportedEventRepository.findOne({
-                where: {id: reportId},
-                relations: ["event", "user"]
-            });
-
-            if (!report){
-                throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Report NOT Found")
-            }
-
-            if (report.status !== ReportedEventEnum.PENDING){
-                throw new ErrorHandler(
-                    httpStatusCodes.BAD_REQUEST,
-                    "Only pending reports can be resolved"
-                );
-            }
-
-            report.status = ReportedEventEnum.REJECTED
-
-            const updated = await reportedEventRepository.save(report);
-
-            return new ResponseGenerator(httpStatusCodes.OK, {
-                success: true,
-                message: "Report rejected successfully",
-                report: updated
-            }).send(res);
-
- 
-        } catch(err){
-            next(err);
+        if (!report) {
+            throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Report not found");
         }
+
+        if (report.status !== ReportedEventEnum.PENDING) {
+            throw new ErrorHandler(
+                httpStatusCodes.BAD_REQUEST,
+                "Only pending reports can be rejected"
+            );
+        }
+
+        report.status = ReportedEventEnum.REJECTED;
+
+        const updated = await reportedEventRepository.save(report);
+
+        return new ResponseGenerator(httpStatusCodes.OK, {
+            success: true,
+            message: "Report rejected successfully",
+            report: updated
+        }).send(res);
+
+    } catch (err) {
+        next(err);
     }
+}
+
+    public static async updateReportStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+        const reportId = Number(req.params.id);
+        const { status } = req.body;
+
+        if (!["pending", "resolved", "rejected"].includes(status)) {
+            throw new ErrorHandler(httpStatusCodes.BAD_REQUEST, "Invalid status");
+        }
+
+        const report = await reportedEventRepository.findOne({
+            where: { id: reportId },
+            relations: ["event", "event.reportedEvents"]
+        });
+
+        if (!report) {
+            throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Report not found");
+        }
+
+        // Update report status
+        report.status = status as ReportedEventEnum;
+        await reportedEventRepository.save(report);
+
+        // EVENT BLOCKING BEHAVIOR
+        if (status === "resolved") {
+            report.event.isBlocked = true;
+            await eventRepository.save(report.event);
+        } else if (status === "rejected") {
+            // Unblock event ONLY if NO other 'resolved' reports exist
+            const hasResolved = report.event.reportedEvents.some(
+                (r) => r.status === ReportedEventEnum.RESOLVED && r.id !== reportId
+            );
+
+            if (!hasResolved) {
+                report.event.isBlocked = false;
+                await eventRepository.save(report.event);
+            }
+        }
+
+        return new ResponseGenerator(httpStatusCodes.OK, {
+            success: true,
+            message: `Report updated to ${status}`,
+            report
+        }).send(res);
+
+    } catch (err) {
+        next(err);
+    }
+}
+
+
 }

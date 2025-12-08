@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../../entities/User.entity";
-import { userRepository } from "../../utils/Repositories";
+import { eventRepository, reportedEventRepository, userRepository } from "../../utils/Repositories";
 import { organizerRepository } from "../../utils/Repositories";
 import ResponseGenerator from "../../utils/ResponseGenerator";
 import httpStatusCodes from "../../errors/HttpCodes";
 import ErrorHandler from "../../errors/ErrorHandler";
-
+import { UserRole } from "../../utils/Enums";
+import { MoreThanOrEqual, LessThan } from "typeorm";
 
 export class AdminController{
     public static async listPendingOrganizers(req:Request, res:Response, next:NextFunction){
@@ -80,5 +81,105 @@ export class AdminController{
             next(err)
         }
     }
+
+
+
+    public static async getAdminStats(req: Request, res: Response, next: NextFunction) {
+    try {
+        // ----------------------------
+        // USERS
+        // ----------------------------
+        const totalUsers = await userRepository.count();
+
+        const totalOrganizers = await userRepository.count({
+            where: { role: UserRole.ORGANIZER }
+        });
+
+        const totalAttendees = await userRepository.count({
+            where: { role: UserRole.ATTENDEE }
+        });
+
+        // Pending organizers (from organizerRepository)
+        const pendingOrganizers = await organizerRepository.count({
+            where: { isApproved: false }
+        });
+
+        // ----------------------------
+        // EVENTS
+        // ----------------------------
+        const totalEvents = await eventRepository.count();
+
+        const now = new Date();
+
+        const upcomingEvents = await eventRepository.count({
+            where: {
+                startDateTime: MoreThanOrEqual(now),
+            }
+        });
+
+        const pastEvents = await eventRepository.count({
+            where: {
+                startDateTime: LessThan(now),
+            }
+        });
+
+        // ----------------------------
+        // REPORTED EVENTS
+        // ----------------------------
+        const reportedEvents = await reportedEventRepository.count();
+
+        // ----------------------------
+        // SEND RESPONSE
+        // ----------------------------
+        new ResponseGenerator(httpStatusCodes.OK, {
+            success: true,
+            message: "Admin stats overview",
+            stats: {
+                totalUsers,
+                totalOrganizers,
+                totalAttendees,
+                pendingOrganizers,
+                totalEvents,
+                upcomingEvents,
+                pastEvents,
+                reportedEvents
+            }
+        }).send(res);
+
+    } catch (err) {
+        next(err);
+    }
+}
+
+    public static async listAllOrganizers(req: Request, res: Response, next: NextFunction) {
+  try {
+    const organizers = await organizerRepository.find({
+      relations: ["user"], // so we get name + email from user table
+      order: { id: "ASC" }
+    });
+
+    const formatted = organizers.map(o => ({
+      id: o.id,
+      organizationName: o.organizationName ?? null,
+      isApproved: o.isApproved,
+      createdAt: o.user.createdAt,
+      user: {
+        id: o.user.id,
+        name: o.user.name,
+        email: o.user.email,
+      }
+    }));
+
+    return new ResponseGenerator(httpStatusCodes.OK, {
+      success: true,
+      organizers: formatted,
+    }).send(res);
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+
 
 }

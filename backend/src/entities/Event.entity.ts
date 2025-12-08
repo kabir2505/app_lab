@@ -21,7 +21,7 @@ export class Event{
     @Column({type: "text"})
     description: string;
 
-    @Column({nullable: true})
+    @Column({default:"https://upload.wikimedia.org/wikipedia/en/5/5d/AKIRA_%281988_poster%29.jpg"})
     bannerImageUrl: string;
 
     @Column({ nullable: true})
@@ -42,7 +42,7 @@ export class Event{
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Column({default:false})
+    @Column({default:false, nullable:true})
     isBlocked:boolean;
 
     @OneToMany(() => TicketType, (ticket) => ticket.event)

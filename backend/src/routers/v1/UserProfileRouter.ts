@@ -23,6 +23,7 @@ class UserProfileRouter {
         this._router.get("/me",this._auth,this._userController.getMe);
         this._router.patch("/", this._auth, this._userController.updateAttendeeProfile)
         this._router.get("/bookings/:bookingId", this._auth, this._roleatt, this._userController.getBookingById)
+        this._router.patch("/organizer/update", this._auth, this._userController.updateOrganizerProfile)
     }
 }
 

@@ -26,7 +26,7 @@ class EventRouter{
     private _configure(){
     this.router.get("/", this._eventController.listAllEvents); //no auth or role needed
     this.router.get("/search", this._eventController.searchEvents);
-    this.router.get("/company-events", this._auth, this._eventController.listOrgEvents)
+    this.router.get("/company-events", this._auth, this._roleorg, this._eventController.listOrgEvents)
     this.router.get("/upcoming",this._eventController.listUpcomingEvents);
     this.router.get("/:eventId", this._eventController.listEventById); // no auth or role needed
     this.router.get("/:eventId/attendees", this._auth, this._roleorg,this._eventController.getEventAttendees)
