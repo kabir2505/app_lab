@@ -7,10 +7,7 @@ import * as z from "zod"
 //ENUMS
 import {BookingStatusEnum, UserRole} from "../../utils/Enums";
 
-//MAILER
-// import {MailTransporter} from "../../config/MailTransporter";
 
-//REST ERRORS & RESPONSE
 import ErrorHandler from "../../errors/ErrorHandler";
 import httpStatusCodes from "../../errors/HttpCodes";
 import ResponseGenerator from "../../utils/ResponseGenerator";
@@ -51,7 +48,7 @@ export class ReviewController{
             throw new ErrorHandler(httpStatusCodes.BAD_REQUEST, "Invalid eventId");
         }
 
-        // Validate request body
+
         const result = CreateReviewSchema.safeParse(req.body);
         if (!result.success) {
             throw new ErrorHandler(
@@ -61,7 +58,6 @@ export class ReviewController{
         }
         const { rating, comment, mediaUrls } = result.data;
 
-        // 1. Check event exists
         const event = await eventRepository.findOne({
             where: { id: eventId },
         });
@@ -73,7 +69,6 @@ export class ReviewController{
             );
         }
 
-        // 2. Verify user attended (has CONFIRMED booking)
         const attended = await bookingRepository
             .createQueryBuilder("booking")
             .leftJoin("booking.ticketType", "ticketType")
@@ -89,7 +84,7 @@ export class ReviewController{
             );
         }
 
-        // 3. Prevent duplicate review by same user
+
         const existingReview = await reviewRepository.findOne({
             where: {
                 user: { id: userId },
@@ -104,7 +99,7 @@ export class ReviewController{
             );
         }
 
-        // 4. Create review
+  
         const review = reviewRepository.create({
             rating,
             comment: comment ?? null,
@@ -213,7 +208,7 @@ export class ReviewController{
             throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Review not found");
         }
 
-        // Check event belongs
+
         if (review.event.id !== eventId) {
             throw new ErrorHandler(
                 httpStatusCodes.BAD_REQUEST,
@@ -221,7 +216,7 @@ export class ReviewController{
             );
         }
 
-        // Ownership check
+
         if (review.user.id !== userId) {
             throw new ErrorHandler(
                 httpStatusCodes.FORBIDDEN,

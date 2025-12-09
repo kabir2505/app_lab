@@ -37,13 +37,13 @@ const CreateBookingSchema = z.object({
 export class EventController{
 
     public static async listAllEvents(req:Request, res:Response, next:NextFunction){
-        // can be accessed by anyone, doesnt have to be logged in
+        
             try {
-                //keep relations simple for get all 
+              
                 const events = await eventRepository.find({where: {isBlocked:false}, relations: ["organizer", "reviews", "ticket_type"]})
                  for (const event of events) {
 
-                // --- remainingCapacity ---
+         
                 const totalBookedResult = await bookingRepository
                 .createQueryBuilder("booking")
                 .leftJoin("booking.ticketType", "ticketType")
@@ -59,7 +59,7 @@ export class EventController{
                 (event as any).remainingCapacity =
                     event.capacity != null ? event.capacity - totalBooked : null;
 
-                // --- remainingSeats for each ticket type ---
+          
                 for (const ticket of event.ticket_type) {
 
                     const ticketBookedResult = await bookingRepository
@@ -92,10 +92,10 @@ export class EventController{
     }
 
     public static async listEventById(req:Request, res:Response, next:NextFunction){
-        //can be accessed by anyone, no auth, no role required
+       
         try{
             const eventId = Number(req.params.eventId);
-            //event by id will need organizer info, reviews, reportedEvent, basically everything
+
             const event = await eventRepository.findOne({
                 where: {id: eventId},
                 relations:["organizer", "ticket_type", "reviews", "reviews.user", "reportedEvents"]
@@ -150,11 +150,11 @@ export class EventController{
     res: Response,
     next: NextFunction
 ) {
-    // can be accessed by anyone, doesn't have to be logged in
+
     try {
         const now = new Date();
 
-        // optionally support ?limit=10
+
         const limit =
             req.query.limit && !isNaN(Number(req.query.limit))
                 ? Number(req.query.limit)
@@ -172,7 +172,7 @@ export class EventController{
         });
 
          for (const event of upcomingEvents) {
-        // --- remainingCapacity ---
+
         const totalBookedResult = await bookingRepository
           .createQueryBuilder("booking")
           .leftJoin("booking.ticketType", "ticketType")
@@ -188,7 +188,7 @@ export class EventController{
         (event as any).remainingCapacity =
           event.capacity != null ? event.capacity - totalBooked : null;
 
-        // --- remainingSeats per ticket type ---
+
         for (const ticket of event.ticket_type) {
           const ticketBookedResult = await bookingRepository
             .createQueryBuilder("booking")
@@ -231,7 +231,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             throw new ErrorHandler(httpStatusCodes.FORBIDDEN, "Authentication required");
         }
 
-        // fetch events that belong to this organizer
+
         const events = await eventRepository.find({
         where: { organizer: { id: organizer.id } },
         relations: ["organizer", "ticket_type"],
@@ -239,9 +239,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
 
 
         console.log(organizer);
-        //console.log(events);
 
-        // ---- Add remainingCapacity + remainingSeats ----
         for (const event of events) {
 
             // remainingCapacity
@@ -260,7 +258,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             (event as any).remainingCapacity =
                 event.capacity != null ? event.capacity - totalBooked : null;
 
-            // remainingSeats for each ticket type
+
             for (const ticket of event.ticket_type) {
                 const ticketBookedResult = await bookingRepository
                     .createQueryBuilder("booking")
@@ -295,9 +293,9 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
     public static async createEvent(req: Request, res:Response, next:NextFunction){
   
         try{
-      //auth required, organizer role required
 
-        //auth attaches user to req
+
+
         const organizer = req["user"];
 
         const {title,description, location, category, startDateTime, bannerImageUrl, teasorVideoUrl, capacity} = req.body;
@@ -370,7 +368,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
 
             const updates = result.data;
 
-            Object.assign(event,updates) //update keys present
+            Object.assign(event,updates) 
 
             const updatedEvent = await eventRepository.save(event);
 
@@ -411,7 +409,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             );
         }
 
-        // Hard delete
+
         await eventRepository.remove(event);
 
         new ResponseGenerator(httpStatusCodes.OK, {
@@ -429,7 +427,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
     next: NextFunction
 ) {
     try {
-        const userId = (req as any).user.id; // attendee
+        const userId = (req as any).user.id; 
         const eventId = Number(req.params.eventId);
 
         const result = CreateBookingSchema.safeParse(req.body);
@@ -438,7 +436,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
         }
         const { ticketTypeId, quantity } = result.data;
 
-        // Ensure ticket type exists & load event
+
         const ticketType = await ticketRepository.findOne({
             where: { id: ticketTypeId },
             relations: ["event"],
@@ -451,7 +449,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             );
         }
 
-        // Ticket type must belong to the event
+
         if (ticketType.event.id !== eventId) {
             throw new ErrorHandler(
                 httpStatusCodes.BAD_REQUEST,
@@ -459,7 +457,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             );
         }
 
-        // Load event to check capacity
+        
         const event = ticketType.event;
 
         // Count existing bookings for this ticket type
@@ -471,7 +469,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             })
             .getCount();
 
-        // Check seatLimit
+
         if (ticketBookingsCount + quantity > ticketType.seatLimit) {
             throw new ErrorHandler(
                 httpStatusCodes.BAD_REQUEST,
@@ -479,7 +477,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             );
         }
 
-        // Check overall event capacity
+
         const allEventBookingsCount = await bookingRepository
             .createQueryBuilder("booking")
             .leftJoin("booking.ticketType", "ticketType")
@@ -496,7 +494,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             );
         }
 
-        // Create booking
+      
         const totalPrice = Number(ticketType.price) * quantity;
 
         const booking = bookingRepository.create({
@@ -589,7 +587,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             .leftJoinAndSelect("event.ticket_type", "ticketType")
             .where("event.isBlocked = false");
 
-        // keyword search
+
         if (q) {
             qb.andWhere(
                 "(event.title ILIKE :q OR event.description ILIKE :q OR event.location ILIKE :q OR event.category ILIKE :q)",
@@ -598,22 +596,22 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
 
         }
 
-        // category
+    
         if (category) {
             qb.andWhere("event.category ILIKE :category", { category: `%${category}%` });
         }
 
-        // location
+
         if (location) {
             qb.andWhere("event.location ILIKE :location", { location: `%${location}%` });
         }
 
-        // min capacity
+        
         if (minCapacity) {
             qb.andWhere("event.capacity >= :minCapacity", { minCapacity: Number(minCapacity) });
         }
 
-        // date range
+
         if (startDate) {
             qb.andWhere("event.startDateTime >= :startDate", { startDate });
         }
@@ -621,12 +619,12 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             qb.andWhere("event.startDateTime <= :endDate", { endDate });
         }
 
-        // pagination
+    
         qb.skip((Number(page) - 1) * Number(limit)).take(Number(limit));
 
         const events = await qb.getMany();
 
-        // attach remaining capacities just like your listAllEvents()
+
         for (const event of events) {
             const totalBookedResult = await bookingRepository
                 .createQueryBuilder("booking")

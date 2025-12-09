@@ -101,34 +101,29 @@ export default function OrganizerProfilePage() {
     }
   }
 
-  // ----------------------------
-  // Loading & error states
-  // ----------------------------
   if (loading) {
     return (
-      <Layout>
+      <OrganizerLayout>
         <div className="max-w-4xl mx-auto px-4 py-10">
           <p className="text-sm text-[#697177]">Loading profile...</p>
         </div>
-      </Layout>
+      </OrganizerLayout>
     );
   }
 
   if (!profile) {
     return (
-      <Layout>
+      <OrganizerLayout>
         <div className="max-w-4xl mx-auto px-4 py-10">
           <p className="text-sm text-red-600">
             {errorMsg || "Profile not found"}
           </p>
         </div>
-      </Layout>
+      </OrganizerLayout>
     );
   }
 
-  // ----------------------------
-  // Render Profile Page
-  // ----------------------------
+
   return (
     <OrganizerLayout>
       <div className="max-w-4xl mx-auto px-4 py-10 space-y-10">
@@ -136,9 +131,7 @@ export default function OrganizerProfilePage() {
 
         {errorMsg && <p className="text-sm text-red-600">{errorMsg}</p>}
 
-        {/* -----------------------------
-            BASIC INFO
-        ----------------------------- */}
+
         <section className="bg-white border border-[#E2E8EF] rounded-xl p-6 shadow-sm space-y-4">
           <div>
             <p className="text-sm text-[#697177]">Name</p>
@@ -154,7 +147,7 @@ export default function OrganizerProfilePage() {
             </p>
           </div>
 
-          {/* Editable fields */}
+     
           <div>
             <p className="text-sm text-[#697177] mb-1">Website</p>
 
@@ -223,9 +216,7 @@ export default function OrganizerProfilePage() {
           )}
         </section>
 
-        {/* -----------------------------
-            ORGANIZER STATS
-        ----------------------------- */}
+
         <section className="bg-white border border-[#E2E8EF] rounded-xl p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-[#11181C] mb-4">
             Statistics

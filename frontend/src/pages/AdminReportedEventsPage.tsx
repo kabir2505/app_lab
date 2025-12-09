@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import AdminReportedEventCard from "../components/AdminReportedEventCard";
-import type { AdminReportedEvent } from "../components/AdminReportedEventCard";
+import type { AdminReportedEvent } from "../types/admin";
 import { apiGet } from "../utils/ClientApi";
 import { getAuthRole } from "../utils/authToken";
 

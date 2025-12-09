@@ -13,7 +13,7 @@ export default function OrganizerEventCard({ event, onDelete }: Props) {
   return (
     <div className="bg-white border border-[#E2E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
 
-      {/* Image with VIEW tag */}
+
       <div className="relative h-40 w-full overflow-hidden bg-[#F7F9FA]">
         {img ? (
           <img
@@ -27,7 +27,7 @@ export default function OrganizerEventCard({ event, onDelete }: Props) {
           </div>
         )}
 
-        {/* VIEW TAG */}
+
         <Link
           to={`/events/${event.id}`}
           className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md hover:bg-black"
@@ -36,7 +36,7 @@ export default function OrganizerEventCard({ event, onDelete }: Props) {
         </Link>
       </div>
 
-      {/* Content */}
+
       <div className="p-4 space-y-2">
         <h2 className="text-base font-semibold text-[#11181C] line-clamp-1">
           {event.title}
@@ -61,13 +61,13 @@ export default function OrganizerEventCard({ event, onDelete }: Props) {
           </p>
         </div>
 
-        {/* Remaining capacity */}
+
         <div className="pt-2 text-sm text-[#11181C]">
           <span className="font-medium">Remaining:</span>{" "}
           {event.remainingCapacity ?? "N/A"}
         </div>
 
-        {/* Update & Delete */}
+
         <div className="flex items-center gap-3 pt-3">
           <Link
             to={`/organizer/events/${event.id}/edit`}

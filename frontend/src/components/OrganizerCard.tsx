@@ -17,7 +17,7 @@ export default function OrganizerCard({ organizer }: { organizer: OrganizerCardP
 
   return (
     <div
-    //   onClick={() => navigate(`/admin/organizers/${organizer.id}/events`)}
+
       className="p-4 bg-white border rounded-xl shadow-sm cursor-pointer hover:shadow-md transition"
     >
       <h3 className="text-sm font-semibold">{organizer.user.name}</h3>

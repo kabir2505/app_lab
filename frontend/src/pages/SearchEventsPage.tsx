@@ -25,9 +25,6 @@ export default function SearchEventsPage() {
       try {
         let res;
 
-        // -----------------------------
-        // 1️⃣ Handle /search-events/popular
-        // -----------------------------
         if (filter) {
           if (filter === "popular") {
             res = await apiGet("/event/popular");
@@ -36,9 +33,7 @@ export default function SearchEventsPage() {
             res = await apiGet(`/event?category=${filter}`);
           }
         }
-        // -----------------------------
-        // 2️⃣ Handle /search-events?q=.. or /search-events?category=..
-        // -----------------------------
+
         else {
           res = await apiGet(`/event/search${location.search}`);
         }
@@ -57,7 +52,7 @@ export default function SearchEventsPage() {
 
   const hasFilters = q || categoryQuery || filter;
 
-  // Dynamic heading text
+
   const pageTitle = filter
     ? filter === "popular"
       ? "Popular Events"
@@ -67,12 +62,12 @@ export default function SearchEventsPage() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Title */}
+
         <h1 className="text-2xl font-semibold text-[#11181C] mb-2">
           {pageTitle}
         </h1>
 
-        {/* Search description */}
+
         {hasFilters && !filter && (
           <p className="text-sm text-[#697177] mb-4">
             Showing results
@@ -101,7 +96,7 @@ export default function SearchEventsPage() {
           </p>
         )}
 
-        {/* Results */}
+
         {loading ? (
           <p className="text-sm text-[#697177]">Loading events…</p>
         ) : events.length === 0 ? (

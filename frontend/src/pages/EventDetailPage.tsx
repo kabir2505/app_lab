@@ -3,54 +3,37 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import ReviewCard from "../components/ReviewCard";
 
-import {
-  getEventById,
-  getMe,
-  getUserBookings,
-  bookEvent,
-  createReview,
-  updateReview,
-  deleteReview,
-  getEventAttendees, reportEvent
-} from "../utils/ClientApi";
+import {getEventById,getMe,getUserBookings,bookEvent,createReview,updateReview,deleteReview,getEventAttendees, reportEvent} from "../utils/ClientApi";
 
 import { getAuthRole, getAuthToken } from "../utils/authToken";
 import { apiGet,apiPatch } from "../utils/ClientApi";
-import type {
-  EventDetail,
-  EventReview,
-  GetMeResponse,
-  GetUserBookingsResponse,
-  EventAttendee,
-} from "../types/event";
+import type {EventDetail,EventReview,GetMeResponse,GetUserBookingsResponse,EventAttendee,} from "../types/event";
 
-// =====================================================================
-// MAIN COMPONENT
-// =====================================================================
+
 
 export default function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const numericEventId = Number(eventId);
 
-  // Core state
+
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // User + bookings
+ 
   const [me, setMe] = useState<GetMeResponse["user"] | null>(null);
   const [bookings, setBookings] = useState<GetUserBookingsResponse["bookings"]>(
     []
   );
 
-  // Booking state
+  
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingError, setBookingError] = useState("");
 
-  // Review state
+  
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState("");
 
@@ -61,12 +44,12 @@ export default function EventDetailPage() {
   const [editRating, setEditRating] = useState(5);
   const [editComment, setEditComment] = useState("");
 
-  // Organizer attendees state
+
   const [attendees, setAttendees] = useState<EventAttendee[]>([]);
   const [attendeesLoading, setAttendeesLoading] = useState(false);
   const [attendeeError, setAttendeeError] = useState("");
 
-// Report event state
+
 const [reportReason, setReportReason] = useState("");
 const [reportError, setReportError] = useState("");
 const [reportSuccess, setReportSuccess] = useState("");
@@ -82,9 +65,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
   const role = getAuthRole();
   const hasToken = !!getAuthToken();
 
-  // =====================================================================
-  // Helper: Reload Event
-  // =====================================================================
+
 
   async function reloadEvent() {
     if (!numericEventId) return;
@@ -110,9 +91,6 @@ const [eventReports, setEventReports] = useState<any[]>([]);
     }
   }
 
-  // =====================================================================
-  // Initial Load: Event + User + Bookings
-  // =====================================================================
 
   useEffect(() => {
     if (!numericEventId || Number.isNaN(numericEventId)) {
@@ -125,11 +103,11 @@ const [eventReports, setEventReports] = useState<any[]>([]);
       try {
         setLoading(true);
 
-        // Load event data
+      
         const eventRes = await getEventById(numericEventId);
         setEvent(eventRes.event);
 
-        // Load user (optional)
+   
         if (hasToken) {
           const meRes = await getMe();
           setMe(meRes.user);
@@ -140,7 +118,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
           }
 
 
-          // Detect if user already reported this event
+      
             if (meRes.user.role === "attendee") {
             try {
                 const repRes = await apiGet("/report"); // returns all reports
@@ -153,10 +131,10 @@ const [eventReports, setEventReports] = useState<any[]>([]);
             }
 
 
-          // Detect if user already reported this event
+         
         if (role === "attendee") {
         try {
-            const repRes = await apiGet("/report"); // your existing route returns ALL reports
+            const repRes = await apiGet("/report"); 
             const already = repRes.events.some(
             (r: any) => r.event.id === numericEventId && r.user.id === meRes.user.id
             );
@@ -165,7 +143,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
         }
 
 
-        // Load all reports (admin only)
+
         if (role === "admin") {
         try {
             const repRes = await apiGet("/report");
@@ -188,9 +166,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
     load();
   }, [numericEventId, hasToken]);
 
-  // =====================================================================
-  // Organizer Attendees Loading
-  // =====================================================================
+
 
   useEffect(() => {
     if (!event || !me) return;
@@ -203,9 +179,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
     }
   }, [event, me]);
 
-  // =====================================================================
-  // Derivatives
-  // =====================================================================
+
 
   const isPastEvent = useMemo(() => {
     if (!event) return false;
@@ -236,9 +210,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
     hasToken &&
     role === "attendee";
 
-  // =====================================================================
-  // Booking Handler
-  // =====================================================================
+
 
   async function handleBookClick(e: React.FormEvent) {
     e.preventDefault();
@@ -272,9 +244,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
     }
   }
 
-  // =====================================================================
-  // Review Handlers
-  // =====================================================================
+
 
   function startEditingReview() {
     if (!userReview) return;
@@ -401,9 +371,6 @@ async function handleReportEvent() {
 
 
 
-  // =====================================================================
-  // Render Handling
-  // =====================================================================
 
   if (loading) {
     return (
@@ -432,15 +399,11 @@ async function handleReportEvent() {
 
   const dateLabel = new Date(event.startDateTime).toLocaleString();
 
-  // =====================================================================
-  // JSX
-  // =====================================================================
+
 
   return (
     <Layout>
-      {/* ------------------------------------------------------------------
-          BANNER IMAGE
-      ------------------------------------------------------------------ */}
+
       <div className="w-full bg-[#F3F4F6]">
         <div className="max-w-5xl mx-auto px-4">
           <div className="relative h-64 flex items-center justify-center">
@@ -462,14 +425,12 @@ async function handleReportEvent() {
         </div>
       </div>
 
-      {/* ------------------------------------------------------------------
-          MAIN GRID
-      ------------------------------------------------------------------ */}
+
       <div className="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-8">
 
-        {/* LEFT COLUMN =================================================== */}
+
         <section>
-          {/* Category + badge */}
+       
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-1">
               <span className="inline-flex px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700">
@@ -487,7 +448,7 @@ async function handleReportEvent() {
             <p className="mt-1 text-sm">{event.description}</p>
           </div>
 
-          {/* Event metadata */}
+        
           <div className="mb-4 space-y-1 text-sm">
             <p>
               <span className="font-medium">Date:</span> {dateLabel}
@@ -505,7 +466,7 @@ async function handleReportEvent() {
             </p>
           </div>
 
-          {/* Public reviews */}
+       
           {event.reviews.length > 0 ? (
             <div className="mt-10">
               <h2 className="text-lg font-semibold">Reviews</h2>
@@ -519,9 +480,6 @@ async function handleReportEvent() {
             <p className="mt-8 text-xs text-gray-500">No reviews yet.</p>
           )}
 
-          {/* --------------------------------------------------------------
-              Review forms (Create/Edit/Delete)
-          --------------------------------------------------------------- */}
           {canSeeReviewSection && (
             <div className="mt-12 space-y-4">
               <h2 className="text-lg font-semibold">Your Review</h2>
@@ -662,9 +620,7 @@ async function handleReportEvent() {
         </section>
 
 
-        {/* =============================
-    ADMIN REPORT MANAGEMENT
-============================= */}
+
 {role === "admin" && eventReports.length > 0 && (
   <div className="mb-6 p-4 border rounded-lg bg-white shadow-sm">
     <h2 className="text-lg font-semibold mb-2">Report Management</h2>
@@ -707,7 +663,7 @@ async function handleReportEvent() {
 )}
 
 
-        {/* RIGHT COLUMN =================================================== */}
+     
         <aside className="space-y-4">
           <div className="border border-[#E2E8EF] rounded-xl bg-white p-4 shadow-sm">
             <h2 className="text-sm font-semibold text-[#11181C] mb-3">
@@ -791,7 +747,7 @@ async function handleReportEvent() {
         </aside>
       </div>
 
-    {/* REPORT EVENT SECTION */}
+
 {role === "attendee" &&
   hasBookingForEvent &&
   isPastEvent && (
@@ -836,9 +792,7 @@ async function handleReportEvent() {
 
 
 
-      {/* =================================================================
-          ORGANIZER — ATTENDEE TABLE
-      ================================================================= */}
+
       {hasToken &&
         role === "organizer" &&
         me?.id === event.organizer.id && (

@@ -11,12 +11,12 @@ export default function OrganizerNavbar() {
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      {/* Left: Logo */}
+
       <Link to="/organizer" className="text-xl font-semibold text-[#11181C]">
-        Eventify Organizer
+        ShowFlick Organizer
       </Link>
 
-      {/* Right: Links */}
+
       <div className="flex gap-4 items-center text-sm text-[#11181C]">
         <Link to="/organizer/events">My Events</Link>
         <Link to="/organizer/create-event">Create Event</Link>

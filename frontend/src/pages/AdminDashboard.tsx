@@ -1,21 +1,10 @@
 // src/pages/admin/AdminDashboardPage.tsx
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import { apiGet } from "../utils/ClientApi";
 import { getAuthRole } from "../utils/authToken";
-
-interface StatPayload {
-  totalUsers: number;
-  totalOrganizers: number;
-  totalAttendees: number;
-  totalEvents: number;
-  upcomingEvents: number;
-  pastEvents: number;
-  reportedEvents: number;
-  pendingOrganizers: number;
-}
+import type { StatPayload } from "../types/admin";
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -24,14 +13,14 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Protect admin route
+  
   useEffect(() => {
     if (getAuthRole() !== "admin") {
       navigate("/", { replace: true });
     }
   }, [navigate]);
 
-  // Load dashboard data
+
   useEffect(() => {
     async function load() {
       try {
@@ -83,8 +72,7 @@ export default function AdminDashboardPage() {
         <StatCard label="Pending Organizers" value={stats.pendingOrganizers} />
       </div>
 
-      {/* ACTION BUTTONS */}
-   {/* ACTION BUTTONS */}
+   
 <div className="flex flex-col sm:flex-row gap-4 mt-8">
 
   <Link

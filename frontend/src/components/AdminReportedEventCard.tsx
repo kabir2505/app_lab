@@ -1,29 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { updateReportStatus } from "../utils/ClientApi";
 
-export interface AdminReportedEvent {
-  id: number;
-  reason: string;
-  status: string;
-  reportedAt: string;
-  reportedBy: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  event: {
-    id: number;
-    title: string;
-    category: string;
-    location: string;
-    startDateTime: string;
-  };
-  organizer: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
+import type { AdminReportedEvent } from "../types/admin";
 
 export default function AdminReportedEventCard({ event }: { event: AdminReportedEvent }) {
   const navigate = useNavigate();

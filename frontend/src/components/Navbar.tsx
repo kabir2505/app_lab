@@ -18,12 +18,12 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      {/* Left: Logo */}
+
       <Link to="/" className="text-xl font-semibold text-[#11181C]">
-        Eventify
+        ShowFlick
       </Link>
 
-      {/* Center: Search */}
+
       <form
         onSubmit={handleSearchSubmit}
         className="hidden md:flex items-center max-w-sm w-full mx-6"
@@ -38,11 +38,11 @@ export default function Navbar() {
         />
       </form>
 
-      {/* Right: Links */}
+
       <div className="flex gap-4 items-center text-sm text-[#11181C]">
         <Link to="/events/all-events">Events</Link>
 
-        {/* --- When NOT logged in --- */}
+ 
         {!role && (
           <>
             <Link to="/login">Login</Link>
@@ -51,10 +51,10 @@ export default function Navbar() {
           </>
         )}
 
-        {/* --- When Logged In --- */}
+
         {role && (
           <>
-            {/* Profile link based on role */}
+
             {role === "attendee" && (
               <Link
                 to="/profile"

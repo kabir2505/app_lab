@@ -99,14 +99,11 @@ export class AdminController{
             where: { role: UserRole.ATTENDEE }
         });
 
-        // Pending organizers (from organizerRepository)
         const pendingOrganizers = await organizerRepository.count({
             where: { isApproved: false }
         });
 
-        // ----------------------------
-        // EVENTS
-        // ----------------------------
+
         const totalEvents = await eventRepository.count();
 
         const now = new Date();
@@ -123,14 +120,9 @@ export class AdminController{
             }
         });
 
-        // ----------------------------
-        // REPORTED EVENTS
-        // ----------------------------
+
         const reportedEvents = await reportedEventRepository.count();
 
-        // ----------------------------
-        // SEND RESPONSE
-        // ----------------------------
         new ResponseGenerator(httpStatusCodes.OK, {
             success: true,
             message: "Admin stats overview",
@@ -154,7 +146,7 @@ export class AdminController{
     public static async listAllOrganizers(req: Request, res: Response, next: NextFunction) {
   try {
     const organizers = await organizerRepository.find({
-      relations: ["user"], // so we get name + email from user table
+      relations: ["user"], 
       order: { id: "ASC" }
     });
 

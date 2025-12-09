@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { getAuthRole } from "../utils/authToken";
 import { useNavigate } from "react-router";
-import {
-  fetchOrganizers,
-  approveOrganizer,
-  rejectOrganizer
-} from "../utils/ClientApi";
+import {fetchOrganizers,approveOrganizer,rejectOrganizer} from "../utils/ClientApi";
 
 import OrganizerRow from "../components/OrganizerRow";
 import type { OrganizerUser } from "../types/user";

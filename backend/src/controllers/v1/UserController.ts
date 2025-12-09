@@ -7,10 +7,7 @@ import * as z from "zod"
 //ENUMS
 import {BookingStatusEnum, UserRole} from "../../utils/Enums";
 
-//MAILER
-// import {MailTransporter} from "../../config/MailTransporter";
 
-//REST ERRORS & RESPONSE
 import ErrorHandler from "../../errors/ErrorHandler";
 import httpStatusCodes from "../../errors/HttpCodes";
 import ResponseGenerator from "../../utils/ResponseGenerator";
@@ -24,9 +21,7 @@ import { AuthHelper } from "../../utils/AuthHelper";
 import logger from "../../utils/logger";
 import { TicketType } from "../../entities/TicketType.entity";
 
-//use zod for input user req.body validation
-//first parse user body for basic inputs
-    //then if pass, parse for role specific 
+
 
 
 const UserSchema = z.object({
@@ -40,15 +35,7 @@ const UserLoginSchema = z.object({
     password: z.string()
 })
 
-// router.post("/signup/user", (req, res, next) => {
-//   req.role = "user";
-//   next();
-// }, AuthController.userSignUp);
 
-// router.post("/signup/organizer", (req, res, next) => {
-//   req.role = "organizer";
-//   next();
-// }, AuthController.userSignUp);
 
 
 export class UserController {

@@ -17,7 +17,7 @@ export default function Home() {
       const take4 = <T,>(arr: T[] | undefined | null) => (arr ?? []).slice(0, 4);
       const [upcomingRes, popRes, techRes, fashionRes] = await Promise.all([
         apiGet("/event/upcoming"),
-        apiGet("/event/search?sort=rating"),   // or /event/popular
+        apiGet("/event/search?sort=rating"),   
         apiGet("/event/search?category=tech"),
         apiGet("/event/search?category=fashion"),
       ]);
@@ -53,9 +53,7 @@ console.log("fashion", fashionRes.events?.map((e: any) => e.category));
   return (
     <Layout>
 
-      {/* ------------------------------ */}
-      {/* 1. UPCOMING EVENTS              */}
-      {/* ------------------------------ */}
+
       <SectionBlock
         title="Upcoming Events"
         subtitle="Discover the latest events happening soon near you."
@@ -63,9 +61,7 @@ console.log("fashion", fashionRes.events?.map((e: any) => e.category));
         events={upcoming}
       />
 
-      {/* ------------------------------ */}
-      {/* 2. POPULAR EVENTS (By Rating)  */}
-      {/* ------------------------------ */}
+
       <SectionBlock
         title="Popular Events"
         subtitle="Top-rated events people love."
@@ -73,9 +69,7 @@ console.log("fashion", fashionRes.events?.map((e: any) => e.category));
         events={popular}
       />
 
-      {/* ------------------------------ */}
-      {/* 3. TECH EVENTS                 */}
-      {/* ------------------------------ */}
+
       <SectionBlock
         title="Tech Events"
         subtitle="Explore hackathons, conferences and meetups."
@@ -83,9 +77,7 @@ console.log("fashion", fashionRes.events?.map((e: any) => e.category));
         events={techEvents}
       />
 
-      {/* ------------------------------ */}
-      {/* 4. FASHION EVENTS              */}
-      {/* ------------------------------ */}
+
       <SectionBlock
         title="Fashion Events"
         subtitle="Discover the latest shows and lifestyle events."
@@ -97,9 +89,7 @@ console.log("fashion", fashionRes.events?.map((e: any) => e.category));
   );
 }
 
-/* ------------------------------ */
-/* Reusable Section Component     */
-/* ------------------------------ */
+
 function SectionBlock({
   title,
   subtitle,

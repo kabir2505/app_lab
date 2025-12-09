@@ -7,11 +7,11 @@ import { setAuthToken, setAuthRole } from "../utils/authToken";
 export default function LoginPage() {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState(""); //[] because returns [value,setter]
+    const [email, setEmail] = useState(""); 
     const [password, setPassword] = useState("");
 
-    const [error,setError] = useState<string | null>(null); //error: string | null = null and function setError(value: string | null)
-    const [loading, setLoading] = useState(false); //not loading unless explicitly start a fetch
+    const [error,setError] = useState<string | null>(null); 
+    const [loading, setLoading] = useState(false); 
 
     async function handleSubmit(e: React.FormEvent){
         e.preventDefault();
@@ -32,7 +32,7 @@ export default function LoginPage() {
             setAuthRole(role);
             setAuthToken(token);
 
-                    
+                
 
             if (role === "organizer") {
             navigate("/organizer");

@@ -9,9 +9,8 @@ export default function AllEventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filters & sort state
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("date_desc"); // default: latest first
+  const [sortBy, setSortBy] = useState<string>("date_desc"); 
   const [hidePastEvents, setHidePastEvents] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,7 +27,7 @@ export default function AllEventsPage() {
     fetchEvents();
   }, []);
 
-  // Derived filtered + sorted events
+ 
   const processedEvents = useMemo(() => {
     let filtered = [...events];
 
@@ -37,14 +36,14 @@ export default function AllEventsPage() {
       filtered = filtered.filter((e) => e.category === selectedCategory);
     }
 
-    // Hide past events
+  
     if (hidePastEvents) {
       filtered = filtered.filter(
         (e) => new Date(e.startDateTime) >= new Date()
       );
     }
 
-    // Sorting
+ 
     filtered.sort((a, b) => {
       const dateA = new Date(a.startDateTime).getTime();
       const dateB = new Date(b.startDateTime).getTime();
@@ -82,10 +81,10 @@ export default function AllEventsPage() {
             All Events
           </h1>
 
-          {/* FILTERS + SORT BAR */}
+ 
           <div className="bg-white border border-[#E2E8EF] rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
 
-            {/* Category Filter */}
+  
             <div className="flex gap-2 items-center">
               <label className="text-sm text-[#11181C] font-medium">
                 Category:
@@ -104,7 +103,7 @@ export default function AllEventsPage() {
               </select>
             </div>
 
-            {/* Sort Filter */}
+    
             <div className="flex gap-2 items-center">
               <label className="text-sm text-[#11181C] font-medium">
                 Sort By:
@@ -121,7 +120,7 @@ export default function AllEventsPage() {
               </select>
             </div>
 
-            {/* Hide Past Toggle */}
+     
             <div className="flex gap-2 items-center">
               <input
                 type="checkbox"
@@ -134,7 +133,7 @@ export default function AllEventsPage() {
             </div>
           </div>
 
-          {/* Events List */}
+    
           {processedEvents.length === 0 ? (
             <p className="text-[#697177] text-center text-sm">
               No events match your filters.

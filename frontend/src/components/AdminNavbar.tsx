@@ -9,12 +9,11 @@ export default function AdminNavbar() {
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      {/* Left: Logo */}
+  
       <Link to="/admin" className="text-xl font-semibold text-[#11181C]">
         AdminPanel
       </Link>
 
-      {/* Right: Menu */}
       <div className="flex gap-5 items-center text-sm text-[#11181C]">
 
         <Link to="/admin">Dashboard</Link>

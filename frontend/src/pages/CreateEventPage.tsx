@@ -4,23 +4,14 @@ import Layout from "../components/Layout";
 import { createEvent, apiPost } from "../utils/ClientApi";
 import { getAuthRole } from "../utils/authToken";
 
-import type {
-  CreateEventFormValues,
-  CreateEventRequest,
-  CreateEventResponse,
-  CreateTicketFormValues,
-  CreateTicketTypeRequest,
-  EventCategory,
-} from "../types/event";
+import type {CreateEventFormValues,CreateEventRequest,CreateEventResponse,CreateTicketFormValues,CreateTicketTypeRequest,EventCategory, } from "../types/event";
 
 import { EVENT_CATEGORIES } from "../types/event";
 
 export default function CreateEventPage() {
   const navigate = useNavigate();
 
-  // ----------------------------
-  // FORM STATE
-  // ----------------------------
+
   const [form, setForm] = useState<CreateEventFormValues>({
     title: "",
     description: "",
@@ -40,9 +31,7 @@ export default function CreateEventPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ----------------------------
-  // PROTECT ROUTE (organizer only)
-  // ----------------------------
+
   useEffect(() => {
     if (getAuthRole() !== "organizer") {
       setErrorMsg("Only organizers can create events.");
@@ -50,9 +39,7 @@ export default function CreateEventPage() {
     }
   }, [navigate]);
 
-  // ----------------------------
-  // FORM FIELD UPDATER
-  // ----------------------------
+
   function updateField<K extends keyof CreateEventFormValues>(
     field: K,
     value: CreateEventFormValues[K]
@@ -60,9 +47,7 @@ export default function CreateEventPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  // ----------------------------
-  // TICKET FIELD UPDATER
-  // ----------------------------
+
   function updateTicketField<K extends keyof CreateTicketFormValues>(
     index: number,
     field: K,
@@ -75,16 +60,13 @@ export default function CreateEventPage() {
     });
   }
 
-  // ----------------------------
-  // SUBMIT FORM
-  // ----------------------------
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
 
     try {
-      // 1️⃣ Prepare Event Payload
+
       const eventPayload: CreateEventRequest = {
         title: form.title,
         description: form.description,
@@ -96,11 +78,11 @@ export default function CreateEventPage() {
         teasorVideoUrl: form.teasorVideoUrl || null,
       };
 
-      // 2️⃣ POST /event
+     
       const eventRes: CreateEventResponse = await createEvent(eventPayload);
       const eventId = eventRes.event.id;
 
-      // 3️⃣ POST tickets for this event
+      
       for (const ticket of tickets) {
         const payload: CreateTicketTypeRequest = {
           name: ticket.name,
@@ -122,9 +104,7 @@ export default function CreateEventPage() {
     }
   }
 
-  // ----------------------------
-  // RENDER PAGE
-  // ----------------------------
+
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-10">
@@ -136,7 +116,7 @@ export default function CreateEventPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Title */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Title
@@ -150,7 +130,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Description */}
+    
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Description
@@ -164,7 +144,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Location */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Location
@@ -178,7 +158,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Category */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Category
@@ -200,7 +180,7 @@ export default function CreateEventPage() {
             </select>
           </div>
 
-          {/* Start Date & Time */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Start Date & Time
@@ -214,7 +194,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Capacity */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Capacity
@@ -229,7 +209,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Banner Image */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Banner Image URL (optional)
@@ -242,7 +222,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Teaser Video */}
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Teaser Video URL (optional)
@@ -255,9 +234,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* ------------------------------
-              FIXED TICKET TYPES SECTION
-             ------------------------------ */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-[#11181C]">
               Ticket Types
@@ -268,12 +244,11 @@ export default function CreateEventPage() {
                 key={index}
                 className="border border-gray-200 p-4 rounded-md bg-white"
               >
-                {/* Name — fixed */}
+           
                 <p className="font-medium text-sm text-[#11181C] mb-2 capitalize">
                   Ticket Type: {ticket.name}
                 </p>
 
-                {/* Price */}
                 <label className="block text-sm font-medium text-[#11181C]">
                   Price
                 </label>
@@ -288,7 +263,6 @@ export default function CreateEventPage() {
                   required
                 />
 
-                {/* Seat Limit */}
                 <label className="block text-sm font-medium text-[#11181C] mt-3">
                   Seat Limit
                 </label>
@@ -306,7 +280,7 @@ export default function CreateEventPage() {
             ))}
           </div>
 
-          {/* SUBMIT BUTTON */}
+    
           <button
             type="submit"
             disabled={loading}

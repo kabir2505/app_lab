@@ -8,7 +8,7 @@ import {
 } from "../utils/ClientApi";
 import type { Event } from "../types/event";
 
-// ---------- Local types ----------
+
 
 type AttendeeProfile = {
   preferences: string | null;
@@ -28,7 +28,7 @@ type BookingStatus = "confirmed" | "cancelled" | string;
 
 type BookingTicket = {
   id: number;
-  name: string; // "vip" | "regular" | "early_bird" | ...
+  name: string; 
   price: number;
   seatLimit: number;
   remainingSeats?: number;
@@ -62,7 +62,6 @@ type UpdateAttendeeProfileRequest = {
   avatarUrl: string | null;
 };
 
-// ---------- Booking card component ----------
 
 function BookingCard({ booking }: { booking: Booking }) {
   const event = booking.ticketType.event;
@@ -79,7 +78,7 @@ function BookingCard({ booking }: { booking: Booking }) {
 
   return (
     <div className="border border-[#E2E8EF] rounded-lg bg-white p-4 flex flex-col gap-2">
-      {/* Top: event title + status */}
+    
       <div className="flex items-center justify-between gap-2">
         <div>
           <p className="text-sm font-semibold text-[#11181C] line-clamp-1">
@@ -107,7 +106,7 @@ function BookingCard({ booking }: { booking: Booking }) {
         </div>
       </div>
 
-      {/* Ticket info */}
+
       <div className="text-xs text-[#4B5563] flex flex-wrap gap-x-4 gap-y-1">
         <p>
           <span className="font-medium text-[#11181C]">Ticket:</span>{" "}
@@ -127,7 +126,7 @@ function BookingCard({ booking }: { booking: Booking }) {
         </p>
       </div>
 
-      {/* Remaining seats (if available) */}
+   
       {typeof booking.ticketType.remainingSeats === "number" && (
         <p className="text-[11px] text-[#697177]">
           Remaining seats for this ticket:{" "}
@@ -140,7 +139,7 @@ function BookingCard({ booking }: { booking: Booking }) {
   );
 }
 
-// ---------- Main page ----------
+
 
 export default function AttendeeProfilePage() {
   const [me, setMe] = useState<MeUser | null>(null);
@@ -148,14 +147,14 @@ export default function AttendeeProfilePage() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // edit profile form state
+
   const [isEditing, setIsEditing] = useState(false);
   const [prefInput, setPrefInput] = useState("");
   const [bioInput, setBioInput] = useState("");
   const [avatarInput, setAvatarInput] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
 
-  // ---------- Load data ----------
+
   useEffect(() => {
     const role = getAuthRole();
 
@@ -197,7 +196,7 @@ export default function AttendeeProfilePage() {
     loadData();
   }, []);
 
-  // ---------- Derived data ----------
+
 
   const sortedBookings: Booking[] = useMemo(() => {
     if (!bookings || bookings.length === 0) return [];
@@ -209,7 +208,7 @@ export default function AttendeeProfilePage() {
       (b) => b.status.toLowerCase() !== "confirmed"
     );
 
-    // sort each group by most recent first
+
     const byDateDesc = (a: Booking, b: Booking) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 
@@ -218,7 +217,7 @@ export default function AttendeeProfilePage() {
 
   const hasBookings = sortedBookings.length > 0;
 
-  // ---------- Handlers: edit profile ----------
+  
 
   function startEditing() {
     if (!me) return;
@@ -272,7 +271,7 @@ export default function AttendeeProfilePage() {
     }
   }
 
-  // ---------- Render ----------
+
 
   if (loading) {
     return (
@@ -302,7 +301,7 @@ export default function AttendeeProfilePage() {
     <Layout>
       <div className="min-h-screen bg-[#F7F9FA]">
         <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-[1.1fr,2fr] gap-8">
-          {/* LEFT: personal info */}
+
           <section className="space-y-4">
             <div className="border border-[#E2E8EF] rounded-xl bg-white p-5 shadow-sm">
               <div className="flex items-center gap-4">
@@ -322,7 +321,7 @@ export default function AttendeeProfilePage() {
                   )}
                 </div>
 
-                {/* Basic info */}
+           
                 <div>
                   <p className="text-base font-semibold text-[#11181C]">
                     {me.name}
@@ -334,7 +333,7 @@ export default function AttendeeProfilePage() {
                 </div>
               </div>
 
-              {/* Profile details */}
+              
               <div className="mt-4 space-y-3 text-sm">
                 <div>
                   <p className="text-xs font-medium text-[#687076] uppercase tracking-wide mb-1">
@@ -366,7 +365,7 @@ export default function AttendeeProfilePage() {
                 </div>
               </div>
 
-              {/* Edit button */}
+      
               <div className="mt-4">
                 {!isEditing ? (
                  <button
@@ -384,7 +383,7 @@ export default function AttendeeProfilePage() {
               </div>
             </div>
 
-            {/* Edit form */}
+
             {isEditing && (
               <form
                 onSubmit={handleSaveProfile}
@@ -465,7 +464,7 @@ export default function AttendeeProfilePage() {
             )}
           </section>
 
-          {/* RIGHT: bookings */}
+
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-[#11181C]">

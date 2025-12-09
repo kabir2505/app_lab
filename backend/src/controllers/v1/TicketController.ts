@@ -124,7 +124,7 @@ export class TicketController{
 
 
     public static async createTicketType(req:Request, res: Response, next:NextFunction){
-        // ORGANIZER can create Tickets for THEIR events
+  
         try {
             const organizerId = (req as any).user.id;
             const eventId = Number(req.params.eventId);
@@ -179,7 +179,7 @@ export class TicketController{
                 )
             }
 
-            //create ticket type
+            
             const ticket =  ticketRepository.create({
                 ...validated,
                 event: {id: eventId} as any,//pass event object, eventually only it's id gets saved as event_id
@@ -206,14 +206,14 @@ export class TicketController{
         const organizerId = (req as any).user.id;
         const ticketId = Number(req.params.ticketId);
 
-       // zod validate
+
         const result = UpdateTicketSchema.safeParse(req.body);
         if (!result.success) {
             throw new ErrorHandler(httpStatusCodes.BAD_REQUEST, "Invalid ticket update fields");
         }
         const validated = result.data;
 
-        // find ticket with event & organizer
+
         const ticket = await ticketRepository.findOne({
             where: { id: ticketId },
             relations: ["event", "event.organizer"],
@@ -223,7 +223,7 @@ export class TicketController{
             throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Ticket type not found");
         }
 
-        // organizer owns event?
+    
         if (ticket.event.organizer.id !== organizerId) {
             throw new ErrorHandler(
                 httpStatusCodes.FORBIDDEN,
@@ -293,7 +293,7 @@ public static async deleteTicketType(
             );
         }
 
-        // 2. Organizer must own the event
+    
         if (ticket.event.organizer.id !== organizerId) {
             throw new ErrorHandler(
                 httpStatusCodes.FORBIDDEN,
@@ -301,19 +301,7 @@ public static async deleteTicketType(
             );
         }
 
-        // // 3. Optional check: prevent deleting tickets with existing bookings
-        // const bookingCount = await bookingRepository.count({
-        //     where: { ticketType: { id: ticketId } }
-        // });
-
-        // if (bookingCount > 0) {
-        //     throw new ErrorHandler(
-        //         httpStatusCodes.BAD_REQUEST,
-        //         "Cannot delete ticket type that has active bookings"
-        //     );
-        // }
-
-        // 4. Delete ticket
+ 
         await ticketRepository.remove(ticket);
 
         return new ResponseGenerator(httpStatusCodes.OK, {

@@ -13,9 +13,7 @@ export default function OrganizerEventsPage() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // --------------------
-  // FETCH ORGANIZER EVENTS
-  // --------------------
+
   async function fetchEvents() {
     try {
       const res = await apiGet("/event/company-events");
@@ -28,9 +26,7 @@ export default function OrganizerEventsPage() {
     }
   }
 
-  // --------------------
-  // DELETE EVENT
-  // --------------------
+
   async function handleDelete(eventId: number) {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
@@ -44,9 +40,7 @@ export default function OrganizerEventsPage() {
     }
   }
 
-  // --------------------
-  // PROTECT ROUTE
-  // --------------------
+
   useEffect(() => {
     if (getAuthRole() !== "organizer") {
       navigate("/", { replace: true });
@@ -55,9 +49,7 @@ export default function OrganizerEventsPage() {
     }
   }, []);
 
-  // --------------------
-  // RENDER
-  // --------------------
+
   return (
     <OrganizerLayout>
       <div className="max-w-6xl mx-auto px-4 py-10">

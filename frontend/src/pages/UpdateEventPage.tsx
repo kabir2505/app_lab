@@ -43,14 +43,12 @@ export default function UpdateEventPage() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Protect route
   useEffect(() => {
     if (getAuthRole() !== "organizer") {
       navigate("/", { replace: true });
     }
   }, [navigate]);
 
-  // Fetch event + tickets
   useEffect(() => {
     async function loadEvent() {
       try {
@@ -62,13 +60,13 @@ export default function UpdateEventPage() {
           description: event.description,
           location: event.location,
           category: event.category as EventCategory,
-          startDateTime: event.startDateTime.slice(0, 16), // format for datetime-local
+          startDateTime: event.startDateTime.slice(0, 16), 
           bannerImageUrl: event.bannerImageUrl || "",
           teasorVideoUrl: event.teasorVideoUrl || "",
           capacity: event.capacity ?? 0,
         });
 
-        // Load tickets → assuming event.ticket_type exists
+
         if (event.ticket_type) {
           const mapped = event.ticket_type.map((t: TicketType) => ({
             name: t.name,
@@ -91,9 +89,6 @@ export default function UpdateEventPage() {
     loadEvent();
   }, [eventId]);
 
-  // -------------------------
-  // Update field helpers
-  // -------------------------
   function updateField<K extends keyof CreateEventFormValues>(
     key: K,
     value: CreateEventFormValues[K]
@@ -113,9 +108,7 @@ export default function UpdateEventPage() {
     });
   }
 
-  // -------------------------
-  // SUBMIT UPDATE
-  // -------------------------
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorMsg("");
@@ -132,7 +125,7 @@ export default function UpdateEventPage() {
         teasorVideoUrl: form.teasorVideoUrl || null,
       };
 
-    //   // PATCH event
+
       await apiPatch(`/event/${eventId}`, payload);
 
     //   // Update ticket types
@@ -163,9 +156,7 @@ export default function UpdateEventPage() {
     );
   }
 
-  // -------------------------
-  // RENDER
-  // -------------------------
+
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-10">
@@ -179,7 +170,7 @@ export default function UpdateEventPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Title */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">Title</label>
             <input
@@ -191,7 +182,7 @@ export default function UpdateEventPage() {
             />
           </div>
 
-          {/* Description */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">Description</label>
             <textarea
@@ -203,7 +194,7 @@ export default function UpdateEventPage() {
             />
           </div>
 
-          {/* Location */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">Location</label>
             <input
@@ -215,7 +206,7 @@ export default function UpdateEventPage() {
             />
           </div>
 
-          {/* Category */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">Category</label>
             <select
@@ -233,7 +224,7 @@ export default function UpdateEventPage() {
             </select>
           </div>
 
-          {/* Date */}
+      
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Start Date & Time
@@ -247,7 +238,7 @@ export default function UpdateEventPage() {
             />
           </div>
 
-          {/* Capacity */}
+
           <div>
             <label className="block text-sm font-medium text-[#11181C]">Capacity</label>
             <input
@@ -260,7 +251,7 @@ export default function UpdateEventPage() {
             />
           </div>
 
-          {/* Images */}
+    
           <div>
             <label className="block text-sm font-medium text-[#11181C]">
               Banner Image URL
@@ -285,36 +276,7 @@ export default function UpdateEventPage() {
             />
           </div>
 
-          {/* Tickets
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#11181C]">Ticket Types</h2>
-
-            {tickets.map((ticket, index) => (
-              <div key={index} className="border p-4 rounded-md bg-white">
-                <p className="font-medium text-sm mb-2 capitalize">
-                  Ticket Type: {ticket.name}
-                </p>
-
-                <label className="block text-sm font-medium">Price</label>
-                <input
-                  type="number"
-                  min={0}
-                  value={ticket.price}
-                  onChange={(e) => updateTicketField(index, "price", Number(e.target.value))}
-                  className="mt-1 w-full border rounded-md px-3 py-2 text-sm"
-                />
-
-                <label className="block text-sm font-medium mt-3">Seat Limit</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={ticket.seatLimit}
-                  onChange={(e) => updateTicketField(index, "seatLimit", Number(e.target.value))}
-                  className="mt-1 w-full border rounded-md px-3 py-2 text-sm"
-                />
-              </div>
-            ))}
-          </div> */}
+      
 
           <button
             type="submit"

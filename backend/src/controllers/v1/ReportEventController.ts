@@ -4,13 +4,10 @@ import * as fs from "fs/promises";
 import path from "path";
 import * as z from "zod"
 
-//ENUMS
+
 import {BookingStatusEnum, UserRole} from "../../utils/Enums";
 
-//MAILER
-// import {MailTransporter} from "../../config/MailTransporter";
 
-//REST ERRORS & RESPONSE
 import ErrorHandler from "../../errors/ErrorHandler";
 import httpStatusCodes from "../../errors/HttpCodes";
 import ResponseGenerator from "../../utils/ResponseGenerator";
@@ -46,7 +43,7 @@ export class ReportEventController{
             throw new ErrorHandler(httpStatusCodes.BAD_REQUEST, "Invalid event ID");
         }
 
-        // Validate input
+
         const result = ReportEventSchema.safeParse(req.body);
         if (!result.success) {
             throw new ErrorHandler(
@@ -56,7 +53,7 @@ export class ReportEventController{
         }
         const { reason } = result.data;
 
-        // Check if event exists
+
         const event = await eventRepository.findOne({
             where: { id: eventId },
         });
@@ -65,7 +62,7 @@ export class ReportEventController{
             throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Event not found");
         }
 
-        // Prevent duplicate report from same user
+
         const existing = await reportedEventRepository.findOne({
             where: {
                 user: { id: userId },
@@ -94,7 +91,7 @@ export class ReportEventController{
             );
         }
 
-        // Create report
+
         const newReport = reportedEventRepository.create({
             user: { id: userId } as any,
             event: { id: eventId } as any,
@@ -120,7 +117,7 @@ export class ReportEventController{
         req:Request, res:Response, next:NextFunction
     ) {
         try{
-            //only admin can
+    
             const user = (req as any).user;
             
             const statusFilter = req.query.status as string | undefined;
@@ -263,11 +260,11 @@ public static async rejectReportedEvent(req: Request, res: Response, next: NextF
             throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Report not found");
         }
 
-        // Update report status
+
         report.status = status as ReportedEventEnum;
         await reportedEventRepository.save(report);
 
-        // EVENT BLOCKING BEHAVIOR
+
         if (status === "resolved") {
             report.event.isBlocked = true;
             await eventRepository.save(report.event);

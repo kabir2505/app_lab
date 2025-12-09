@@ -2,7 +2,7 @@ import type { EventReview } from "../types/event";
 
 interface ReviewCardProps {
   review: EventReview;
-  highlight?: boolean; // can use for "Your review"
+  highlight?: boolean; 
 }
 
 export default function ReviewCard({ review, highlight }: ReviewCardProps) {

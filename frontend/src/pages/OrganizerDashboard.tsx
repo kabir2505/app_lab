@@ -13,18 +13,13 @@ export default function OrganizerDashboardPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ----------------------------
-  // Protect Route (only organizer)
-  // ----------------------------
   useEffect(() => {
     if (getAuthRole() !== "organizer") {
       navigate("/", { replace: true });
     }
   }, [navigate]);
 
-  // ----------------------------
-  // Fetch organizer's events
-  // ----------------------------
+
   useEffect(() => {
     async function fetchOrgEvents() {
       try {
@@ -42,9 +37,7 @@ export default function OrganizerDashboardPage() {
     fetchOrgEvents();
   }, []);
 
-  // ----------------------------
-  // Delete Event
-  // ----------------------------
+
   async function handleDelete(eventId: number) {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
@@ -57,9 +50,6 @@ export default function OrganizerDashboardPage() {
     }
   }
 
-  // ----------------------------
-  // Organize events into upcoming & past
-  // ----------------------------
   const now = new Date();
   const upcomingEvents = events.filter(
     (e) => new Date(e.startDateTime) >= now
@@ -67,10 +57,6 @@ export default function OrganizerDashboardPage() {
   const pastEvents = events.filter(
     (e) => new Date(e.startDateTime) < now
   );
-
-  // ----------------------------
-  // Advanced Stats
-  // ----------------------------
   const stats = useMemo(() => {
     let totalRevenue = 0;
     let totalTicketsSold = 0;
@@ -95,7 +81,6 @@ export default function OrganizerDashboardPage() {
     const utilization =
       totalCapacity > 0 ? (totalUsedCapacity / totalCapacity) * 100 : 0;
 
-    // Upcoming & past revenue
     let upcomingRevenue = 0;
     let pastRevenue = 0;
 
@@ -117,7 +102,6 @@ export default function OrganizerDashboardPage() {
       })
     );
 
-    // Highest-selling event
     let bestEvent = null;
     let maxSold = -1;
     events.forEach((e) => {
@@ -133,7 +117,6 @@ export default function OrganizerDashboardPage() {
       }
     });
 
-    // Category distribution
     const categoryMap: Record<string, number> = {};
     events.forEach((e) => {
       categoryMap[e.category] = (categoryMap[e.category] || 0) + 1;
@@ -163,17 +146,12 @@ export default function OrganizerDashboardPage() {
         </h1>
 
         {errorMsg && <p className="text-sm text-red-600 mb-4">{errorMsg}</p>}
-
-        {/* =====================
-            STATS SECTION
-        ====================== */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {/* Basic counts */}
           <StatBox label="Total Events" value={totalEvents} />
           <StatBox label="Upcoming Events" value={totalUpcoming} />
           <StatBox label="Past Events" value={totalPast} />
 
-          {/* Advanced stats */}
           <StatBox label="Total Tickets Sold" value={stats.totalTicketsSold} />
           <StatBox label="Total Revenue (₹)" value={stats.totalRevenue} />
           <StatBox label="Upcoming Revenue (₹)" value={stats.upcomingRevenue} />
@@ -188,7 +166,6 @@ export default function OrganizerDashboardPage() {
           />
         </div>
 
-        {/* Best Event */}
         {stats.bestEvent && (
           <div className="p-5 mb-10 bg-white border border-[#E2E8EF] rounded-xl shadow-sm">
             <p className="text-xs text-[#697177]">Top-Selling Event</p>
@@ -198,9 +175,6 @@ export default function OrganizerDashboardPage() {
           </div>
         )}
 
-        {/* =====================
-            UPCOMING EVENTS
-        ====================== */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-[#11181C]">
             Upcoming Events
@@ -230,9 +204,6 @@ export default function OrganizerDashboardPage() {
           </div>
         )}
 
-        {/* =====================
-            PAST EVENTS
-        ====================== */}
         <h2 className="text-lg font-semibold text-[#11181C] mb-4">Past Events</h2>
 
         {pastEvents.length === 0 ? (
@@ -251,7 +222,6 @@ export default function OrganizerDashboardPage() {
   );
 }
 
-// Small reusable stat card
 function StatBox({ label, value }: { label: string; value: any }) {
   return (
     <div className="p-5 bg-white border border-[#E2E8EF] rounded-xl shadow-sm">
