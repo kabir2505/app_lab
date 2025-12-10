@@ -290,3 +290,33 @@ export async function getEventAttendees(eventId: number): Promise<EventAttendeeR
 export function reportEvent(eventId: number, data: { reason: string }) {
   return apiPost(`/report/${eventId}`, data);
 }
+
+export async function fetchAllUsers() {
+    return apiGet("/admin/attendees")
+}
+
+export async function toggleBlockUser(userId: number) {
+    const token=getAuthToken();
+  const res = await fetch(`http://localhost:8080/api/v1/admin/users/${userId}/toggle-block`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? {Authorization: `Bearer ${token}`} : {})
+    },
+  });
+  return res.json();
+}
+
+export async function adminDeleteEvent(eventId: number) {
+  const res = await fetch(`${API_BASE_URL}/admin/events/${eventId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to delete event");
+  return data;
+}

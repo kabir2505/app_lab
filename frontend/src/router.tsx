@@ -21,6 +21,7 @@ import OrganizerProfilePage from "./pages/OrganizerProfilePage";
 import AdminDashboardPage from "./pages/AdminDashboard";
 import AdminReportedEventsPage from "./pages/AdminReportedEventsPage";
 import AdminAllOrganizersPage from "./pages/AdminAllOrganizersPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 function AppRouter(){
     return (
         <>
@@ -47,6 +48,7 @@ function AppRouter(){
                 <Route path="/admin" element={<AdminDashboardPage/>} />
                 <Route path="/admin/reported-events" element={<AdminReportedEventsPage />} />
                 <Route path="/admin/all-organizers" element={<AdminAllOrganizersPage />} />
+                <Route path="/admin/all-users" element={<AdminUsersPage />} />
                 <Route path="*" element={<NotFoundPage />} />      
 
                 

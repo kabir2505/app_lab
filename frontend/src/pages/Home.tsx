@@ -65,7 +65,7 @@ console.log("fashion", fashionRes.events?.map((e: any) => e.category));
       <SectionBlock
         title="Popular Events"
         subtitle="Top-rated events people love."
-        link="/search-events/popular"
+        link="/search-events?sort=popular"
         events={popular}
       />
 

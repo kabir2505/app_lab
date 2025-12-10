@@ -252,7 +252,7 @@ export interface EventAttendeeResponse {
 }
 
 
-
+    
 
 
 // interface for model objects (Event, TicketType, Organizer)

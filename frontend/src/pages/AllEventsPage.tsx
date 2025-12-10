@@ -13,6 +13,10 @@ export default function AllEventsPage() {
   const [sortBy, setSortBy] = useState<string>("date_desc"); 
   const [hidePastEvents, setHidePastEvents] = useState<boolean>(false);
 
+
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(0);
+
   useEffect(() => {
     async function fetchEvents() {
       try {
@@ -28,42 +32,53 @@ export default function AllEventsPage() {
   }, []);
 
  
-  const processedEvents = useMemo(() => {
-    let filtered = [...events];
-
-    // Filter by category
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((e) => e.category === selectedCategory);
-    }
-
-  
-    if (hidePastEvents) {
-      filtered = filtered.filter(
-        (e) => new Date(e.startDateTime) >= new Date()
-      );
-    }
+const processedEvents = useMemo(() => {
+  let filtered = [...events];
 
  
-    filtered.sort((a, b) => {
-      const dateA = new Date(a.startDateTime).getTime();
-      const dateB = new Date(b.startDateTime).getTime();
+  if (selectedCategory !== "all") {
+    filtered = filtered.filter((e) => e.category === selectedCategory);
+  }
 
-      switch (sortBy) {
-        case "date_asc":
-          return dateA - dateB; // earliest first
-        case "date_desc":
-          return dateB - dateA; // latest first
-        case "capacity_high":
-          return (b.remainingCapacity ?? 0) - (a.remainingCapacity ?? 0);
-        case "capacity_low":
-          return (a.remainingCapacity ?? 0) - (b.remainingCapacity ?? 0);
-        default:
-          return 0;
-      }
-    });
+  
+  if (hidePastEvents) {
+    filtered = filtered.filter(
+      (e) => new Date(e.startDateTime) >= new Date()
+    );
+  }
 
-    return filtered;
-  }, [events, selectedCategory, hidePastEvents, sortBy]);
+  
+  filtered = filtered.filter((event) => {
+    const ticketPrices = event.ticket_type?.map((t) => Number(t.price)) || [];
+    if (ticketPrices.length === 0) return false;
+
+    const lowestPrice = Math.min(...ticketPrices);
+
+    return lowestPrice >= minPrice && lowestPrice <= maxPrice;
+  });
+
+  
+  filtered.sort((a, b) => {
+    const dateA = new Date(a.startDateTime).getTime();
+    const dateB = new Date(b.startDateTime).getTime();
+
+    switch (sortBy) {
+      case "date_asc":
+        return dateA - dateB;
+      case "date_desc":
+        return dateB - dateA;
+      case "capacity_high":
+        return (b.remainingCapacity ?? 0) - (a.remainingCapacity ?? 0);
+      case "capacity_low":
+        return (a.remainingCapacity ?? 0) - (b.remainingCapacity ?? 0);
+      default:
+        return 0;
+    }
+  });
+
+  return filtered;
+}, [events, selectedCategory, hidePastEvents, sortBy, minPrice, maxPrice]);
+
 
   if (loading) {
     return (
@@ -83,6 +98,27 @@ export default function AllEventsPage() {
 
  
           <div className="bg-white border border-[#E2E8EF] rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+            <div className="flex gap-2 items-center">
+                <label className="text-sm text-[#11181C] font-medium">Price Range:</label>
+
+                <input
+                    type="number"
+                    placeholder="Min"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(Number(e.target.value))}
+                    className="border border-[#E2E8EF] rounded-md px-2 py-1 w-20 text-sm"
+                />
+
+                <span className="text-sm text-[#11181C]">-</span>
+
+                <input
+                    type="number"
+                    placeholder="Max"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Number(e.target.value))}
+                    className="border border-[#E2E8EF] rounded-md px-2 py-1 w-20 text-sm"
+                />
+                </div>
 
   
             <div className="flex gap-2 items-center">

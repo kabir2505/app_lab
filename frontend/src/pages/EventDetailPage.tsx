@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import ReviewCard from "../components/ReviewCard";
 
-import {getEventById,getMe,getUserBookings,bookEvent,createReview,updateReview,deleteReview,getEventAttendees, reportEvent} from "../utils/ClientApi";
+import {getEventById,getMe,getUserBookings,bookEvent,createReview,updateReview,deleteReview,getEventAttendees, reportEvent, adminDeleteEvent} from "../utils/ClientApi";
 
 import { getAuthRole, getAuthToken } from "../utils/authToken";
 import { apiGet,apiPatch } from "../utils/ClientApi";
@@ -153,6 +153,7 @@ const [eventReports, setEventReports] = useState<any[]>([]);
             setEventReports(filtered);
         } catch {}
         }
+
 
 
         }
@@ -839,6 +840,28 @@ async function handleReportEvent() {
             )}
           </div>
         )}
+
+
+
+        {role === "admin" && (
+  <button
+    onClick={async () => {
+      if (!confirm("Are you sure you want to delete this entire event?")) return;
+
+      try {
+        await adminDeleteEvent(event.id);
+        alert("Event deleted successfully.");
+        navigate("/admin/events"); // redirect to admin page
+      } catch (err: any) {
+        alert(err.message || "Failed to delete event.");
+      }
+    }}
+    className="px-3 py-2 text-xs rounded-md bg-red-700 text-white hover:bg-red-800"
+  >
+    Delete Event
+  </button>
+)}
+
     </Layout>
   );
 }

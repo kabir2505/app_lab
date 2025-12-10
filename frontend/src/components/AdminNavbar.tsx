@@ -20,6 +20,7 @@ export default function AdminNavbar() {
         <Link to="/admin/all-organizers">Organizers</Link>
         <Link to="/events/all-events">Events</Link>
         <Link to="/admin/reported-events">Reported Events</Link>
+        <Link to="/admin/all-users"> All Users</Link>
 
         <Link to="/logout" className="text-red-600 font-medium">
           Logout
