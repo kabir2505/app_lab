@@ -280,7 +280,7 @@ public static async deleteTicketType(
         const organizerId = (req as any).user.id;
         const ticketId = Number(req.params.ticketId);
 
-        // 1. Find ticket with event + organizer
+ 
         const ticket = await ticketRepository.findOne({
             where: { id: ticketId },
             relations: ["event", "event.organizer"],

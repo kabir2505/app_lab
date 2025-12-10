@@ -53,7 +53,8 @@ export class User { //call User not users
     @OneToMany(() => ReportedEvent, (reported)=> reported.user)
     reportedEvents: ReportedEvent[];
 
-
+    @Column({default:false})
+    isBlocked: boolean;
 
     @CreateDateColumn()
     createdAt: Date;

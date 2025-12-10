@@ -183,7 +183,7 @@ export class UserProfileController {
   try {
     const user = (req as any).user;
 
-    // Validate incoming fields
+
     const result = updateOrganizerProfileSchema.safeParse(req.body);
     if (!result.success) {
       throw new ErrorHandler(
@@ -194,7 +194,7 @@ export class UserProfileController {
 
     const updates = result.data;
 
-    // Load organizer + profile
+
     const organizer = await userRepository.findOne({
       where: { id: user.id },
       relations: ["organizerProfile"],
@@ -207,19 +207,17 @@ export class UserProfileController {
       );
     }
 
-    // Ensure profile exists
+
     let profile = organizer.organizerProfile;
     if (!profile) {
-      // Create a new organizer profile if missing
+
       profile = organizerRepository.create({
         user: { id: user.id } as any,
       });
     }
 
-    // Apply updates safely
     Object.assign(profile, updates);
 
-    // Save profile correctly
     const savedProfile = await organizerRepository.save(profile);
 
     return new ResponseGenerator(httpStatusCodes.OK, {

@@ -152,7 +152,7 @@ export class UserController {
             }
 
             const user = await userRepository.findOne({where: {email}});
-
+            
             if (!user){
                 throw new ErrorHandler(
                     httpStatusCodes.BAD_REQUEST,
@@ -170,6 +170,13 @@ export class UserController {
                     httpStatusCodes.BAD_REQUEST,
                     "Invalid password"
                 );
+            }
+
+            if ( user.isBlocked){
+                throw new ErrorHandler(
+                    httpStatusCodes.FORBIDDEN,
+                    "Your account has been blocked!"
+                )
             }
 
             const token: string = AuthHelper.generateJWTToken(

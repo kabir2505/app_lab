@@ -7,6 +7,8 @@ import httpStatusCodes from "../../errors/HttpCodes";
 import ErrorHandler from "../../errors/ErrorHandler";
 import { UserRole } from "../../utils/Enums";
 import { MoreThanOrEqual, LessThan } from "typeorm";
+import { isBooleanObject } from "util/types";
+import { Event } from "../../entities/Event.entity"; 
 
 export class AdminController{
     public static async listPendingOrganizers(req:Request, res:Response, next:NextFunction){
@@ -172,6 +174,96 @@ export class AdminController{
   }
 }
 
+    public static async toggleUserblock(req:Request, res:Response, next:NextFunction){
+        try{
+            const userId = Number(req.params.userId);
+
+            const user = await userRepository.findOne({where:{id:userId}});
+
+            if (!user){
+                throw new ErrorHandler(404,"Attendee not found")
+            }
+
+            user.isBlocked = !user.isBlocked;
+            await userRepository.save(user);
+
+
+
+            if (user.role === UserRole.ORGANIZER){
+                console.log("organizer found")
+                await eventRepository.createQueryBuilder().update(Event).set({isBlocked: user.isBlocked}).where("organizer_id = :id", {id: user.id}).execute()
+
+            }
+
+            return new ResponseGenerator(httpStatusCodes.OK, {
+                success:true,
+                message: user.isBlocked,
+            }).send(res)
+
+        }catch(err){
+            next(err);
+        }
+    }
+
+
+    public static async getAllUsers(req:Request, res:Response, next:NextFunction){
+        try{
+            const users = await userRepository.find({
+                // where: {role: UserRole.ATTENDEE},
+                relations: [
+                    "attendeeProfile"
+                ],
+                order: {id: "ASC"}
+            });
+
+            const formatted = users.map(u => ({
+                id: u.id,
+                name: u.name,
+                email:u.email,
+                role:u.role,
+                createdAt: u.createdAt,
+                isBlocked: u.isBlocked,
+                attendeeProfile: u.attendeeProfile || null
+            }));
+
+            return new ResponseGenerator(httpStatusCodes.OK, {
+                success:true,
+                users:formatted
+            }).send(res)
+        }catch(err){
+            next(err);
+        }
+    }
+
+
+    public static async deleteEvent(req:Request, res:Response, next:NextFunction){
+        try{
+            const eventId = Number(req.params.eventId);
+
+            if (isNaN(eventId)){
+                throw new ErrorHandler(httpStatusCodes.BAD_REQUEST, "Invalid event id")
+            };
+
+            const event = await eventRepository.findOne({
+                where: {id: eventId},
+                relations: ["organizer"]
+            });
+
+
+            if (!event) {
+                throw new ErrorHandler(httpStatusCodes.NOT_FOUND, "Event not found")
+            }
+
+            await eventRepository.remove(event);
+
+            new ResponseGenerator(httpStatusCodes.OK, {
+                success:true,
+                message: "Event deleted successfully"
+            }).send(res);
+        } catch(err){
+            next(err);
+        }
+    }
 
 
 }

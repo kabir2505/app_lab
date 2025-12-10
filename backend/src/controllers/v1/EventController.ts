@@ -577,6 +577,7 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             minCapacity,
             startDate,
             endDate,
+            sort="default",
             page = 1,
             limit = 10,
         } = req.query;
@@ -585,7 +586,11 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
             .createQueryBuilder("event")
             .leftJoinAndSelect("event.organizer", "organizer")
             .leftJoinAndSelect("event.ticket_type", "ticketType")
-            .where("event.isBlocked = false");
+            .leftJoin("event.reviews", "review") 
+            .addSelect("AVG(review.rating)", "avgRating") 
+            .groupBy("event.id")
+            .addGroupBy("organizer.id")
+            .addGroupBy("ticketType.id");
 
 
         if (q) {
@@ -618,6 +623,14 @@ public static async listOrgEvents(req: Request, res: Response, next: NextFunctio
         if (endDate) {
             qb.andWhere("event.startDateTime <= :endDate", { endDate });
         }
+
+
+        if (sort === "popular") {
+            qb.orderBy("avgRating", "DESC", "NULLS LAST"); 
+        } else {
+            qb.orderBy("event.startDateTime", "ASC"); 
+        }
+    
 
     
         qb.skip((Number(page) - 1) * Number(limit)).take(Number(limit));
